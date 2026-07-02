@@ -2,7 +2,8 @@
 
 Scene::Scene()
 {
-	m_view = View(ViewMode::FREE);
+	m_view = View(ViewMode::ORBITAL);
+	m_cubePosition = { 0, 0, 0 };
 }
 
 void Scene::update()
@@ -14,8 +15,10 @@ void Scene::update()
 void Scene::render()
 {
 	ClearBackground(BLACK);
+
 	BeginMode3D(m_view.camera3D);
 		DrawGrid(100, 1.0f);
+		DrawCube(m_cubePosition, 10, 10, 10, BLUE);
 	EndMode3D();
 }
 
@@ -23,7 +26,7 @@ void Scene::gui()
 {
 	ImGui::Begin("Settings");
 	ImGui::Text("FPS : %i", GetFPS());
-	ImGui::SliderFloat("Zoom", &m_view.camera2D.zoom, 0, 10);
+	ImGui::DragFloat3("Cube positoon", &m_cubePosition.x);
 
 	m_view.gui();
 	ImGui::End();

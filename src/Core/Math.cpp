@@ -1,0 +1,149 @@
+#include <Limits>
+
+#include "Math.hpp"
+#include "../Settings.hpp"
+
+Vector2 Math::toVec2f(const Vector2& a)
+{
+	return { (float)a.x, (float)a.y };
+}
+
+float Math::length(const Vector2& a)
+{
+	return sqrt(a.x*a.x + a.y*a.y);
+}
+
+float Math::distance(const Vector2& a, const Vector2& b)
+{
+	return Math::length(b - a);
+}
+
+Vector2 Math::normalize(const Vector2& a)
+{
+	return a / Math::length(a);
+}
+
+Vector2 Math::random(float xMin, float xMax, float yMin, float yMax)
+{
+	float tx = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
+	float ty = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
+	return { tx * (xMax-xMin) + xMin, ty * (yMax - yMin) + yMin };
+}
+
+int Math::random(int min, int max)
+{
+	return (max - min) * ((float)(rand()) / (float)(RAND_MAX)) + min;
+}
+
+float Math::random(float min, float max)
+{
+	return (max - min) * ((float)rand() / (float)RAND_MAX) + min;
+}
+
+Vector2 Math::lerp(const Vector2& a, const Vector2& b, float t)
+{
+	return (b - a) * t + a;
+}
+
+float Math::dot(const Vector2& a, const Vector2& b)
+{
+	return a.x * b.x + a.y * b.y;
+}
+
+bool Math::lineIntersect(const Vector2& a, const Vector2& b, const Vector2& c, const Vector2& d, Vector2* o)
+{
+	Vector2 ab = b - a;
+	Vector2 cd = d - c;
+	Vector2 ac = c - a;
+
+	float det = Math::det(ab, cd);
+	if (det == 0)
+	{
+		return false;
+	}
+	
+	float t1 =  (cd.y  * ac.x - cd.x * ac.y) / det;
+	float t2 = -(-ab.y * ac.x + ab.x * ac.y) / det;
+	
+	
+	if (Math::distance(a + ab * t1, c + cd * t2) < 0.001f && (t1 <= 1 && t1 >= 0 && t2 <= 1 && t2 >= 0))
+	{
+		*o = a + ab * t1;
+		return true;
+	}
+	
+	return false;
+}
+
+Vector3 Math::lerp(const Vector3& a, const Vector3& b, float t)
+{
+	return (b - a) * t + a;
+}
+
+float Math::alerp(float a, float b, float x)
+{
+	return (x - a) / (b - a);
+}
+
+Vector2 Math::project(const Vector2& a, const Vector2& b)
+{
+	return a * (float)(Math::dot(a, b)/(pow(Math::length(a), 2)));
+}
+
+Vector2 Math::normal(const Vector2& a)
+{
+	return { -a.y, a.x };
+}
+
+Vector2 Math::reflect(const Vector2& a, const Vector2& n)
+{
+	Vector2 t = Math::normal(n);
+
+	float lambdaN  = Math::dot(a, n);
+	float lambdaT = Math::dot(a, t);
+
+	return n * -lambdaN + t * lambdaT;
+}
+
+float Math::det(const Vector2& a, const Vector2& b)
+{
+	return a.x * b.y - a.y * b.x;
+}
+
+float Math::crossDirection(const Vector2& a, const Vector2& b)
+{
+	//Cross product is outside so det is positive so rotation direction is counter clock wise
+	return Math::det(a, b) > 0 ? 1 : -1;
+}
+
+float Math::sgn(const float& a)
+{
+	if (a > 0)
+	{
+		return 1;
+	}
+	
+	if (a < 0)
+	{
+		return -1;
+	}
+
+	return 0;
+}
+
+float Math::angle(const Vector2& a)
+{
+	return atan2(a.y, a.x);
+}
+
+float Math::angle(const Vector2& a, const Vector2& b)
+{
+	return angle(b) - angle(a);
+}
+
+Vector2 Math::rotate(const Vector2& a, float angle)
+{
+	float c = cos(angle);
+	float s = sin(angle);
+	return { c*a.x - s*a.y, s*a.x + c*a.y };
+}

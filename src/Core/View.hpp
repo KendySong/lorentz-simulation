@@ -2,6 +2,7 @@
 #include "ViewMode.hpp"
 
 #include <Raylib/raylib.h>
+#include <Raylib/rlgl.h>
 #include <Raylib/raymath.h>
 #include <Imgui/imgui.h>
 
@@ -19,5 +20,12 @@ public :
 	Camera3D camera3D;
 
 private :
+	void updateOrbitalPosition();
+
 	float m_zoomScale;
+	float m_sensitivity;
+
+	float m_observationDist;	
+	float m_yaw;
+	float m_pitch;
 };

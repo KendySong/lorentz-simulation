@@ -20,4 +20,6 @@ public :
 
 private :
 	View m_view;
+
+	Vector3 m_cubePosition;
 };

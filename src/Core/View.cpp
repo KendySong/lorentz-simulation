@@ -1,7 +1,5 @@
 #include "View.hpp"
 
-#include <iostream>
-
 View::View(ViewMode mode)
 {
 	this->mode = mode;
@@ -11,19 +9,20 @@ View::View(ViewMode mode)
 	camera2D.rotation = 0;
 	camera2D.zoom = 1.0f;
 
-	camera3D.position = { 0, 10, 10 };
+	camera3D.position = { 0, 0, 0};
 	camera3D.target = { 0, 0, 0 };
 	camera3D.up = { 0, 1, 0 };
 	camera3D.fovy = 90;
 	camera3D.projection = CAMERA_PERSPECTIVE;
 
-	m_zoomScale = 1.2f;
+	m_zoomScale			= 1.2f;
+	m_sensitivity		= 0.5f;
+	m_observationDist	= 20;
+	m_yaw				= 0.3;
+	m_pitch				= 0.7;
 
 	switch (mode)
-	{
-	case ViewMode::Drag2D:
-		break;
-
+	{	
 	case ViewMode::FREE:
 		DisableCursor();
 		break;
@@ -31,18 +30,25 @@ View::View(ViewMode mode)
 	case ViewMode::FPS:
 		DisableCursor();
 		break;
+
+	case ViewMode::ORBITAL:
+		DisableCursor();
+		updateOrbitalPosition();
+		break;
 	}
 }
 
 void View::update() 
 {
 	float wheel = GetMouseWheelMove();
+	Vector2 mouseDelta = GetMouseDelta() * m_sensitivity;
+
 	switch (mode)
 	{
 	case ViewMode::Drag2D:	
 		if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT))
 		{
-			camera2D.target -= GetMouseDelta() / camera2D.zoom;
+			camera2D.target -= mouseDelta / camera2D.zoom;
 		}
 
 		if (wheel != 0)
@@ -66,18 +72,41 @@ void View::update()
 		break;
 
 	case ViewMode::ORBITAL:
-		UpdateCamera(&camera3D, CAMERA_ORBITAL);
+		if (wheel != 0)
+		{
+			m_observationDist = wheel > 0 ? m_observationDist / m_zoomScale : m_observationDist * m_zoomScale;
+		}
+	
+		//Update camera position around origin
+		mouseDelta *= DEG2RAD;
+		m_yaw	+= mouseDelta.x;
+		m_pitch += mouseDelta.y;
+
+		m_pitch = m_pitch > PI / 2 ? PI / 2 : m_pitch < -PI / 2 ? -PI / 2 : m_pitch;
+		this->updateOrbitalPosition();
+		
+		UpdateCameraPro(&camera3D, { 0, 0, 0 }, { 0, 0, 0 }, 0.0f);
 		break;
 	}
 }
 
 void View::gui()
 {
+	ImGui::SeparatorText("Camera");
+	ImGui::DragFloat("Sensitivity", &m_sensitivity, 0.01f);
+	ImGui::DragFloat("Zoom scale", &m_zoomScale);
+
 	ImGui::SeparatorText("Camera 2D");
-	ImGui::InputFloat2("Offset", &camera2D.offset.x);
-	ImGui::InputFloat2("Target", &camera2D.target.x);
+	ImGui::SliderFloat("Zoom",   &camera2D.zoom, 0, 10);
 
 	ImGui::SeparatorText("Camera 3D");
 	ImGui::DragFloat("FOV", &camera3D.fovy);
+}
 
+void View::updateOrbitalPosition()
+{
+	camera3D.position.x = cos(m_yaw) * cos(m_pitch);
+	camera3D.position.y = sin(m_pitch);
+	camera3D.position.z = sin(m_yaw) * cos(m_pitch);
+	camera3D.position *= m_observationDist;
 }
