@@ -7,7 +7,7 @@ Scene::Scene()
 	m_vectorfield = VectorField({ 0, 0, 0 }, 100, 3);
 	m_drawGrid = false;
 
-	m_newton = false;
+	m_newton = true;
 	m_electricField = true;
 	m_magneticField = true;
 
@@ -26,7 +26,7 @@ Scene::Scene()
 	m_distClamp = Minimax<float>(Settings::minClamp, Settings::maxClamp);
 
 	m_particles[0].ray = 1.2f;
-	m_particles[0].charge = 2000;
+	m_particles[0].charge = 3000;
 }
 
 void Scene::update()
@@ -79,7 +79,7 @@ void Scene::update()
 	}
 
 	//Update position
-	for (size_t i = 1; i < m_particles.size(); i++)
+	for (size_t i = 0; i < m_particles.size(); i++)
 	{
 		m_particles[i].position += dt * m_particles[i].velocity + ((dt * dt) / 2) * m_particles[i].acceleration;
 		m_particles[i].velocity += (dt / 2) * (m_particles[i].acceleration + m_particles[i].accelerationBack);
