@@ -22,6 +22,7 @@ public :
 	static Vector2 lerp(const Vector2& a, const Vector2& b, float t);
 	static float dot(const Vector2& a, const Vector2& b);
 	static float dot(const Vector3& a, const Vector3& b);
+	static Vector3 cross(const Vector3& a, const Vector3& b);
 	static bool lineIntersect(const Vector2& a, const Vector2& b, const Vector2& c, const Vector2& d, Vector2* o);
 	static Vector3 lerp(const Vector3& a, const Vector3& b, float t);
 	static float alerp(float a, float b, float x);

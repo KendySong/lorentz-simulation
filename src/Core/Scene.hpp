@@ -9,6 +9,7 @@
 #include "View.hpp"
 #include "../Miscellaneous/VectorField.hpp"
 #include "../Miscellaneous/Particle.hpp"
+#include "../Miscellaneous/Minimax.hpp"
 
 class Scene
 {
@@ -26,4 +27,10 @@ private :
 	std::vector<Particle> m_particles;
 
 	bool m_drawGrid;
+
+	bool m_newton;
+	Minimax<float> m_distClamp;
+
+	bool m_electricField;
+	bool m_magneticField;
 };

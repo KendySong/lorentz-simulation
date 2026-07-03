@@ -8,7 +8,7 @@ Particle::Particle(Vector3 position, float charge, float mass)
 	this->velocity = { 0, 0, 0 };
 	this->acceleration = { 0, 0, 0 };
 	this->accelerationBack = { 0, 0, 0 };
-	this->ray = 0.25f;
+	this->ray = 0.3f;
 
 	m_color = charge < 0 ? BLUE : RED;
 }
@@ -23,4 +23,10 @@ void Particle::gui()
 {
 	ImGui::DragFloat3("Position", &position.x, 0.01f);
 	ImGui::DragFloat3("Velocity", &velocity.x, 0.01f);
+	ImGui::DragFloat("Charge", &charge, 0.1f);
+}
+
+void Particle::addForce(const Vector3& force)
+{
+	this->acceleration += force / mass;
 }

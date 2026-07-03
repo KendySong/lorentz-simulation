@@ -17,7 +17,14 @@ public :
     static const float minCharge;
     static const float maxCharge;
     static const float particleMass;
-    static const float G;
+    static       float G;
+
+    static       float sphereBoundRay;
+    static       float boundRestitution;
+    static       float epsilon;
+
+    static       float minClamp;
+    static       float maxClamp;
 
 private :
     Settings();

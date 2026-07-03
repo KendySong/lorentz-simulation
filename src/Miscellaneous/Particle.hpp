@@ -11,6 +11,7 @@ public :
 	Particle(Vector3 position, float charge, float mass);
 	void draw();
 	void gui();
+	void addForce(const Vector3& force);
 
 	float charge;
 	Vector3 position;

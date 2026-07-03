@@ -70,6 +70,11 @@ float Math::dot(const Vector3& a, const Vector3& b)
 	return a.x * b.x + a.y * b.y + a.z * b.z;
 }
 
+Vector3 Math::cross(const Vector3& a, const Vector3& b)
+{
+	return { a.y * b.z - a.z * b.y, a.z * b.x - a.x * b.z, a.x * b.y - a.y * b.x };
+}
+
 bool Math::lineIntersect(const Vector2& a, const Vector2& b, const Vector2& c, const Vector2& d, Vector2* o)
 {
 	Vector2 ab = b - a;
