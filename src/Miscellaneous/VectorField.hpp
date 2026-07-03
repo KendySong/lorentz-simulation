@@ -15,6 +15,8 @@ public :
 	VectorField() = default;
 	VectorField(Vector3 position, float size, int resolution);
 	void draw();
+	void initGlobalDirection(const Vector3& globalDirection);
+	Vector3 getField(const Vector3& position);
 	void gui();
 
 	std::vector<std::vector<std::vector<Arrow>>> field;
@@ -23,4 +25,5 @@ public :
 
 private :
 	int m_resolution;
+	float m_size;
 };

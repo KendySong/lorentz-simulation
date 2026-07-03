@@ -21,3 +21,4 @@ float Settings::boundRestitution			= 0.1f;
 float Settings::epsilon						= 1.0f;
 float Settings::minClamp					= 90000;
 float Settings::maxClamp					= 100000;
+float Settings::magneticForce				= 1.0f;

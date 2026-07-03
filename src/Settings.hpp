@@ -25,6 +25,7 @@ public :
 
     static       float minClamp;
     static       float maxClamp;
+    static       float magneticForce;
 
 private :
     Settings();

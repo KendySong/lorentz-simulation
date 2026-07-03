@@ -4,12 +4,15 @@
 Scene::Scene()
 {
 	m_view = View(ViewMode::ORBITAL);
-	m_vectorfield = VectorField({ 0, 0, 0 }, 100, 3);
+	m_vectorfield = VectorField({ 0, 0, 0 }, Settings::sphereBoundRay * 2, 10);
 	m_drawGrid = false;
 
 	m_newton = true;
 	m_electricField = true;
 	m_magneticField = true;
+
+	//Init magnetic field
+	m_vectorfield.initGlobalDirection({ 0, 1, 0 });
 
 	//Create a cloud of particle inside a sphere
 	for (size_t i = 0; i < Settings::nbParticles; i++)
@@ -73,8 +76,13 @@ void Scene::update()
 				float electricForce = m_particles[i].charge * electricField;
 				m_particles[i].addForce(electricForce * (-direction));
 			}
-			
 
+			//Magnetic field
+			if (m_magneticField)
+			{
+				Vector3 lorentz = m_particles[i].charge * Math::cross(m_particles[i].velocity, m_vectorfield.getField(m_particles[i].position));
+				m_particles[i].addForce(lorentz);
+			}
 		}
 	}
 
