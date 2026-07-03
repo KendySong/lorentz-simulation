@@ -1,6 +1,9 @@
 #pragma once
 #include <cstdint>
 
+#include <Raylib/raylib.h>
+#include <Raylib/raymath.h>
+
 class Settings
 {
 public :
@@ -8,6 +11,13 @@ public :
 
     static const std::uint32_t width;
     static const std::uint32_t height;
+
+    static const std::uint32_t nbParticles;
+    static const float particleCloudSize;
+    static const float minCharge;
+    static const float maxCharge;
+    static const float particleMass;
+    static const float G;
 
 private :
     Settings();

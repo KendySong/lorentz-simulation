@@ -7,6 +7,8 @@
 #include <Imgui/imgui.h>
 
 #include "View.hpp"
+#include "../Miscellaneous/VectorField.hpp"
+#include "../Miscellaneous/Particle.hpp"
 
 class Scene
 {
@@ -20,6 +22,8 @@ public :
 
 private :
 	View m_view;
+	VectorField m_vectorfield;
+	std::vector<Particle> m_particles;
 
-	Vector3 m_cubePosition;
+	bool m_drawGrid;
 };

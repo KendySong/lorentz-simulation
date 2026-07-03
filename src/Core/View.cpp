@@ -92,15 +92,19 @@ void View::update()
 
 void View::gui()
 {
-	ImGui::SeparatorText("Camera");
-	ImGui::DragFloat("Sensitivity", &m_sensitivity, 0.01f);
-	ImGui::DragFloat("Zoom scale", &m_zoomScale);
+	if (ImGui::TreeNode("Camera"))
+	{
+		ImGui::DragFloat("Sensitivity", &m_sensitivity, 0.01f);
+		ImGui::DragFloat("Zoom scale", &m_zoomScale);
 
-	ImGui::SeparatorText("Camera 2D");
-	ImGui::SliderFloat("Zoom",   &camera2D.zoom, 0, 10);
+		ImGui::SeparatorText("Camera 2D");
+		ImGui::SliderFloat("Zoom", &camera2D.zoom, 0, 10);
 
-	ImGui::SeparatorText("Camera 3D");
-	ImGui::DragFloat("FOV", &camera3D.fovy);
+		ImGui::SeparatorText("Camera 3D");
+		ImGui::DragFloat("FOV", &camera3D.fovy);
+		ImGui::TreePop();
+	}
+	
 }
 
 void View::updateOrbitalPosition()

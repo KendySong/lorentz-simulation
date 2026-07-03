@@ -3,14 +3,14 @@
 #include "Math.hpp"
 #include "../Settings.hpp"
 
-Vector2 Math::toVec2f(const Vector2& a)
-{
-	return { (float)a.x, (float)a.y };
-}
-
 float Math::length(const Vector2& a)
 {
-	return sqrt(a.x*a.x + a.y*a.y);
+	return sqrt(a.x * a.x + a.y * a.y);
+}
+
+float Math::length(const Vector3& a)
+{
+	return sqrt(a.x * a.x + a.y * a.y + a.z * a.z);
 }
 
 float Math::distance(const Vector2& a, const Vector2& b)
@@ -18,9 +18,24 @@ float Math::distance(const Vector2& a, const Vector2& b)
 	return Math::length(b - a);
 }
 
+float Math::distance(const Vector3& a, const Vector3& b)
+{
+	return Math::length(b - a);
+}
+
 Vector2 Math::normalize(const Vector2& a)
 {
 	return a / Math::length(a);
+}
+
+Vector3 Math::normalize(const Vector3& a)
+{
+	float length = Math::length(a);
+	if (length <= 1e-6)
+	{
+		return { 0, 0, 0 };
+	}
+	return a / length;
 }
 
 Vector2 Math::random(float xMin, float xMax, float yMin, float yMax)
@@ -48,6 +63,11 @@ Vector2 Math::lerp(const Vector2& a, const Vector2& b, float t)
 float Math::dot(const Vector2& a, const Vector2& b)
 {
 	return a.x * b.x + a.y * b.y;
+}
+
+float Math::dot(const Vector3& a, const Vector3& b)
+{
+	return a.x * b.x + a.y * b.y + a.z * b.z;
 }
 
 bool Math::lineIntersect(const Vector2& a, const Vector2& b, const Vector2& c, const Vector2& d, Vector2* o)
@@ -87,7 +107,12 @@ float Math::alerp(float a, float b, float x)
 
 Vector2 Math::project(const Vector2& a, const Vector2& b)
 {
-	return a * (float)(Math::dot(a, b)/(pow(Math::length(a), 2)));
+	return a * (float)(Math::dot(a, b) / Math::dot(a, a));
+}
+
+Vector3 Math::project(const Vector3& a, const Vector3& b)
+{
+	return a * (float)(Math::dot(a, b) / Math::dot(a, a));
 }
 
 Vector2 Math::normal(const Vector2& a)
@@ -103,6 +128,12 @@ Vector2 Math::reflect(const Vector2& a, const Vector2& n)
 	float lambdaT = Math::dot(a, t);
 
 	return n * -lambdaN + t * lambdaT;
+}
+
+Vector3 Math::reflect(const Vector3& a, const Vector3& n)
+{
+	Vector3 normal = Math::normalize(n);
+	return a - n * 2 * Math::dot(a, normal);
 }
 
 float Math::det(const Vector2& a, const Vector2& b)
@@ -146,4 +177,34 @@ Vector2 Math::rotate(const Vector2& a, float angle)
 	float c = cos(angle);
 	float s = sin(angle);
 	return { c*a.x - s*a.y, s*a.x + c*a.y };
+}
+
+float Math::clamp(float min, float max, float a)
+{
+	if (a < min)
+	{
+		return min;
+	}
+
+	if (a > max)
+	{
+		return max;
+	}
+
+	return a;
+}
+
+Vector2 operator*(float a, const Vector2& v)
+{
+	return { a * v.x, a * v.y };
+}
+
+Vector3 operator*(float a, const Vector3& v)
+{
+	return { a * v.x, a * v.y, a * v.z };
+}
+
+Vector3 operator-(const Vector3& v)
+{
+	return { -v.x, -v.y, -v.z };
 }
