@@ -8,7 +8,7 @@ Particle::Particle(Vector3 position, float charge, float mass)
 	this->velocity = { 0, 0, 0 };
 	this->acceleration = { 0, 0, 0 };
 	this->accelerationBack = { 0, 0, 0 };
-	this->ray = 0.3f;
+	this->ray = 0.9f;
 
 	m_color = charge < 0 ? BLUE : RED;
 }

@@ -27,10 +27,12 @@ private :
 	std::vector<Particle> m_particles;
 
 	bool m_drawGrid;
-
-	bool m_newton;
+	bool m_drawVectorField;
+	bool m_drawBoundaries;
+	
 	Minimax<float> m_distClamp;
 
+	bool m_newton;
 	bool m_electricField;
 	bool m_magneticField;
 };

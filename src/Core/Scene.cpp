@@ -5,10 +5,12 @@ Scene::Scene()
 {
 	m_view = View(ViewMode::ORBITAL);
 	m_vectorfield = VectorField({ 0, 0, 0 }, Settings::sphereBoundRay * 2, 10);
-	m_drawGrid = false;
+	m_drawGrid = true;
+	m_drawBoundaries = true;
+	m_drawVectorField = false;
 
-	m_newton = true;
-	m_electricField = true;
+	m_newton = false;
+	m_electricField = false;
 	m_magneticField = true;
 
 	//Init magnetic field
@@ -27,9 +29,6 @@ Scene::Scene()
 	}
 
 	m_distClamp = Minimax<float>(Settings::minClamp, Settings::maxClamp);
-
-	m_particles[0].ray = 1.2f;
-	m_particles[0].charge = 3000;
 }
 
 void Scene::update()
@@ -76,13 +75,13 @@ void Scene::update()
 				float electricForce = m_particles[i].charge * electricField;
 				m_particles[i].addForce(electricForce * (-direction));
 			}
+		}
 
-			//Magnetic field
-			if (m_magneticField)
-			{
-				Vector3 lorentz = m_particles[i].charge * Math::cross(m_particles[i].velocity, m_vectorfield.getField(m_particles[i].position));
-				m_particles[i].addForce(lorentz);
-			}
+		//Magnetic field
+		if (m_magneticField)
+		{
+			Vector3 lorentz = m_particles[i].charge * Math::cross(m_particles[i].velocity, Math::normalize(m_vectorfield.getField(m_particles[i].position)) * Settings::magneticForce);
+			m_particles[i].addForce(lorentz);
 		}
 	}
 
@@ -92,11 +91,23 @@ void Scene::update()
 		m_particles[i].position += dt * m_particles[i].velocity + ((dt * dt) / 2) * m_particles[i].acceleration;
 		m_particles[i].velocity += (dt / 2) * (m_particles[i].acceleration + m_particles[i].accelerationBack);
 
+		if (Math::length(m_particles[i].velocity) > 200)
+		{
+			m_particles[i].velocity = Math::normalize(m_particles[i].velocity) * 200;
+		}
+
+		if (Math::length(m_particles[i].acceleration) > 200)
+		{
+			m_particles[i].acceleration = Math::normalize(m_particles[i].acceleration) * 200;
+		}
+
 		//Add limit sphere
-		if (Math::length(m_particles[i].position) >= Settings::sphereBoundRay)
-		{		
+		if (Math::length(m_particles[i].position) + m_particles[i].ray >= Settings::sphereBoundRay)
+		{
 			m_particles[i].position = Math::normalize(m_particles[i].position) * (Settings::sphereBoundRay - m_particles[i].ray);
+
 			m_particles[i].velocity = -m_particles[i].velocity * Settings::boundRestitution;
+			//m_particles[i].velocity = Math::reflect(m_particles[i].velocity, -m_particles[i].position) * Settings::boundRestitution;
 			m_particles[i].acceleration = -m_particles[i].acceleration * Settings::boundRestitution;
 		}
 	}
@@ -107,17 +118,30 @@ void Scene::render()
 	ClearBackground({ 30, 30, 30 });
 
 	BeginMode3D(m_view.camera3D);
+
 		if (m_drawGrid)
 		{
 			DrawGrid(20, 25.0f);
 		}
 
+		if (m_drawVectorField)
+		{
+			m_vectorfield.draw();
+		}
+
+		if (m_drawBoundaries)
+		{
+			DrawCircle3D({ 0, 0, 0 }, Settings::sphereBoundRay, { 0, 0, 0 }, 0,   PURPLE);
+			DrawCircle3D({ 0, 0, 0 }, Settings::sphereBoundRay, { 0, 1, 0 }, 90,  PURPLE);
+			DrawCircle3D({ 0, 0, 0 }, Settings::sphereBoundRay, { 0, 1, 0 }, 45,  PURPLE);
+			DrawCircle3D({ 0, 0, 0 }, Settings::sphereBoundRay, { 0, 1, 0 }, 135, PURPLE);
+		}
+
 		for (size_t i = 0; i < m_particles.size(); i++)
 		{
 			m_particles[i].draw();
-		}
-
-		m_vectorfield.draw();
+		}	
+		
 	EndMode3D();
 }
 
@@ -129,11 +153,17 @@ void Scene::gui()
 	ImGui::SeparatorText("Simulation");
 		ImGui::DragFloat("G", &Settings::G, 0.1f);
 		ImGui::DragFloat("Epsilon", &Settings::epsilon, 0.1f);
+		ImGui::DragFloat("Magnetic intensity", &Settings::magneticForce, 0.01f);
 		ImGui::DragFloat("Bound ray", &Settings::sphereBoundRay);
 		ImGui::DragFloat("Bound restitution", &Settings::boundRestitution, 0.1f);
+		ImGui::SeparatorText("Forces");
 		ImGui::Checkbox("Newton", &m_newton);
 		ImGui::Checkbox("Electric field", &m_electricField);
 		ImGui::Checkbox("Magnetic field", &m_magneticField);
+		ImGui::SeparatorText("Rendering");
+		ImGui::Checkbox("Draw magnetic vector field", &m_drawVectorField);
+		ImGui::Checkbox("Draw grid", &m_drawGrid);
+		ImGui::Checkbox("Draw boundaries", &m_drawBoundaries);
 		m_vectorfield.gui();
 		m_particles[0].gui();
 

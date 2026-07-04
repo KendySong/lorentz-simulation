@@ -2,6 +2,7 @@ workspace "lorentz-simulation"
     location "build"
     architecture "x64"
     configurations { "Debug", "Release" }
+    cppdialect "C++20"
 
 project "lorentz-simulation"
     kind "ConsoleApp"
@@ -9,7 +10,7 @@ project "lorentz-simulation"
     location "build"    
 
     defines "SFML_STATIC"
-    files { "src/**.cpp", "src/**.hpp", "src/**.h", "libraries/include/ImGui/**.cpp", "assets/**.*" }
+    files { "src/**.cpp", "src/**.hpp", "src/**.h", "libraries/include/ImGui/**.cpp", "assets/**.*", "src/shaders/**.*" }
 
     includedirs "libraries/*"
     libdirs "libraries/lib"
