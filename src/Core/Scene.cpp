@@ -105,10 +105,11 @@ void Scene::update()
 		if (Math::length(m_particles[i].position) + m_particles[i].ray >= Settings::sphereBoundRay)
 		{
 			m_particles[i].position = Math::normalize(m_particles[i].position) * (Settings::sphereBoundRay - m_particles[i].ray);
+	
+			m_particles[i].velocity = Math::reflect(m_particles[i].velocity, -m_particles[i].position) * Settings::boundRestitution;
 
-			m_particles[i].velocity = -m_particles[i].velocity * Settings::boundRestitution;
-			//m_particles[i].velocity = Math::reflect(m_particles[i].velocity, -m_particles[i].position) * Settings::boundRestitution;
-			m_particles[i].acceleration = -m_particles[i].acceleration * Settings::boundRestitution;
+			m_particles[i].acceleration = Math::reflect(m_particles[i].acceleration, -m_particles[i].position) * Settings::boundRestitution;
+			//m_particles[i].acceleration = -m_particles[i].acceleration * Settings::boundRestitution;
 		}
 	}
 }

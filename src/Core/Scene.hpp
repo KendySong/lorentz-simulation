@@ -30,6 +30,7 @@ private :
 	bool m_drawVectorField;
 	bool m_drawBoundaries;
 	
+	Shader m_glowEffect;
 	Minimax<float> m_distClamp;
 
 	bool m_newton;
